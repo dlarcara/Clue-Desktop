@@ -1,0 +1,156 @@
+<nav class="navbar navbar-default navbar-static-top">
+        <ul class="nav nav-justified" ng-if="setupStep != 4">
+            <li ng-class="{'active': setupStep == 1}">Welcome</li>
+            <li ng-class="{'active': setupStep == 2}">Enter Players</li>
+            <li ng-class="{'active': setupStep == 3}">Enter Your Cards</li>
+        </ul>
+        <ul class="nav nav-justified" ng-if="setupStep == 4">
+            <li ng-repeat="player in players" ng-class="{'active': activeTurn.player.index == player.index}">
+                <img ng-src="{{player.icon}}" width="20" />&nbsp;
+                {{player.index == activePlayerIndex ? 'You' :player.name}}
+            </li>
+        </ul>
+</nav>
+
+<div class="container" ng-if="setupStep != 4">
+    <div class="jumbotron">
+        <div ng-if="setupStep == 1">
+            <h2>Welcome to clue solver</h1>
+            <p class="lead">Put instructions here</p>
+            <p><button class="btn btn-lg btn-primary" ng-click="moveToNextStep()">Enter Players</button></p>
+        </div>
+        <div ng-if="setupStep == 2">
+            <h2>Enter the players playing</h1>
+            <form name="playersForm" class="form-inline">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Jane Doe" ng-model="playerInput.name" required />
+                    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com" ng-model="playerInput.icon" required />
+                    
+                    <button type="submit" class="btn btn-success" ng-disabled="playersForm.$invalid">Enter Player</button>
+                </div>
+                
+                <p><button class="btn btn-lg btn-primary" ng-click="moveToNextStep()" ng-if="players.length > 2">Enter Your Cards</button></p>
+            </form>
+        </div>
+        <div ng-if="setupStep == 3">
+            <h2>Enter your cards</h1>
+            <p><button class="btn btn-lg btn-primary" ng-click="moveToNextStep()">Start Game</button></p>
+        </div>
+  </div>
+</div>
+
+<div class="container" ng-if="setupStep == 4">
+    <form name="guessForm" novalidate>
+        <div class="col-md-4">
+            <div class="sheet">
+                <table class="table table-striped table-bordered table-condensed">
+                    <tr>
+                        <td class="sheet-cell-title">Suspects</td>
+                        <td ng-repeat="player in players" class="sheet-cell">
+                            <img width="20" ng-src="{{players[$index].icon}}" data-toggle="tooltip" data-original-title="{{player.index == activePlayerIndex ? 'You' : player.name}}"/>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="suspect in suspectCards">
+                        <td class="sheet-cell sheet-cell-display">{{suspect.name}}</td>
+                        <td ng-repeat="player in players" class="sheet-cell" ng-class="getCellClass(suspectIndex, $parent.$index, $index)">&nbsp;</td>
+                    </tr>
+                </table>
+
+                <table class="table table-striped table-bordered table-condensed">
+                    <tr>
+                        <td class="sheet-cell-title">Weapons</td>
+                        <td ng-repeat="player in players" class="sheet-cell">
+                            <img width="20" ng-src="{{players[$index].icon}}" data-toggle="tooltip" data-original-title="{{player.name}}"/>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="weapon in weaponCards">
+                        <td class="sheet-cell sheet-cell-display">{{weapon.name}}</td>
+                        <td ng-repeat="player in players" class="sheet-cell" ng-class="getCellClass(weaponIndex, $parent.$index, $index)">&nbsp;</td>
+                    </tr>
+                </table>
+
+                <table class="table table-striped table-bordered table-condensed no-padding">
+                    <tr>
+                        <td class="sheet-cell-title">Rooms</td>
+                        <td ng-repeat="player in players" class="sheet-cell">
+                            <img width="20" ng-src="{{players[$index].icon}}" data-toggle="tooltip" data-original-title="{{player.name}}"/>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="room in roomCards">
+                        <td class="sheet-cell sheet-cell-display">{{room.name}}</td>
+                        <td ng-repeat="player in players" class="sheet-cell" ng-class="getCellClass(roomIndex, $parent.$index, $index)">&nbsp;</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h3>Active Turn</h3>
+            <div class="form-group">
+                <label for="suspectInput">Suspect</label>
+
+                <div class="input-group">
+                    <input id="suspectInput" type="text" ng-model="formInput.suspect" placeholder="Who did it?" uib-typeahead="suspect as suspect.name for suspect in suspectCards | filter:{name:$viewValue}" typeahead-template-url="selectionTemplate.html" class="form-control" typeahead-min-length="0" required>
+                    <div class="input-group-addon">
+                        <input type="checkbox" ng-model="showncard.suspectShown" ng-change="shownCardChanged(suspectIndex)" ng-if="activePlayerIndex == activeTurn.player.index">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="weaponInput">Weapon</label>
+
+                <div class="input-group">
+                    <input id="weaponInput" type="text" ng-model="formInput.weapon" placeholder="With what weapon?" uib-typeahead="weapon as weapon.name for weapon in weaponCards | filter:{name:$viewValue}" typeahead-template-url="selectionTemplate.html" class="form-control" typeahead-min-length="0" required>
+                    <div class="input-group-addon">
+                        <input type="checkbox" ng-model="showncard.weaponShown" ng-change="shownCardChanged(weaponIndex)" ng-if="activePlayerIndex == activeTurn.player.index">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="roomInput">Room</label>
+
+               <div class="input-group">
+                    <input id="roomInput" type="text" ng-model="formInput.room" placeholder="In what room?" uib-typeahead="room as room.name for room in roomCards | filter:{name:$viewValue}" typeahead-template-url="selectionTemplate.html" class="form-control" typeahead-min-length="0" required>
+                    <div class="input-group-addon">
+                        <input type="checkbox" ng-model="showncard.roomShown" ng-change="shownCardChanged(roomIndex)" ng-if="activePlayerIndex == activeTurn.player.index">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="showerInput">Who Showed</label>
+                <input id="showerInput" type="text" ng-model="formInput.shower" placeholder="Who disproved it?" uib-typeahead="player as player.name for player in getShowers() | filter:{name:$viewValue}" typeahead-template-url="selectionTemplate.html" class="form-control" typeahead-min-length="0" required>
+            </div>
+
+            <div class="form-group">
+                <div class="pull-right">
+                    <button class="btn btn-primary" ng-disabled="guessForm.$invalid || !showerIsPicked()" 
+                            ng-click="enterGuess(activeTurn.player.index, formInput.suspect.index, formInput.weapon.index, formInput.room.index, formInput.shower.index, showncard.category)" >
+                                {{getThisTurnDisplay()}}
+                    </button>
+                    <button class="btn btn-danger" ng-click="endTurn()">Pass</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h3>Active Guess</h3>
+            <div class="row">
+                <div class="col-md-4"><img ng-src="{{formInput.suspect ? formInput.suspect.card : 'images/cards/suspects/unknown.png'}}" width="120"/></div>
+                <div class="col-md-4"><img ng-src="{{formInput.weapon ? formInput.weapon.card : 'images/cards/weapons/unknown.png'}}" width="120"/></div>
+                <div class="col-md-4"><img ng-src="{{formInput.room ? formInput.room.card : 'images/cards/rooms/unknown.png'}}" width="120"/></div>
+            </div>
+
+            <h3>Verdict</h3>
+            <div class="row">
+                <div class="col-md-4"><img ng-src="{{verdict.suspect != undefined ? suspectCards[verdict.suspect].card : 'images/cards/suspects/unknown.png'}}" width="120" /></div>
+                <div class="col-md-4"><img ng-src="{{verdict.weapon != undefined ? weaponCards[verdict.weapon].card : 'images/cards/weapons/unknown.png'}}" width="120" /></div>
+                <div class="col-md-4"><img ng-src="{{verdict.room != undefined ? roomCards[verdict.room].card : 'images/cards/rooms/unknown.png'}}" width="120" /></div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/ng-template" id="selectionTemplate.html">
+    <a>
+        <img ng-src="{{match.model.icon}}" width="25">
+        <span ng-bind-html="match.label | uibTypeaheadHighlight:query"></span>
+    </a>
+</script>

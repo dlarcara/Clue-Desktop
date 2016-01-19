@@ -1,0 +1,112 @@
+body
+{
+    background-color: #085D3B;
+    color: white;
+}
+
+.jumbotron
+{
+    color: black;
+    text-align: center;
+}
+
+/* Clue Sheet */
+.sheet
+{
+    border-radius: 5px;
+    border: 1px solid black;
+    background-color: gray;
+    box-shadow: -2px 2px 5px black;
+    padding: 12px;
+}
+
+.sheet table
+{
+    background: white;
+    border: 0px;
+}
+
+.sheet table.no-padding
+{
+    margin-bottom: 0;
+}
+
+.sheet-header
+{
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
+
+.sheet-cell-title {
+    border: 0px !important;
+    background-color: gray  !important;
+    color: white;
+    font-weight: bold;
+    font-size: 120%;
+    width: 130px !important;
+}
+
+.sheet-cell
+{
+    color: black;
+    text-align: center;
+}
+
+.sheet-cell-have
+{
+    background-color: red !important;
+}
+
+.sheet-cell-have-not
+{
+    background-color: black !important;   
+}
+
+.sheet-cell-maybe
+{
+    background-color: yellow !important;   
+}
+
+.sheet-cell-display
+{
+    text-align: left;
+    width: 130px !important;
+}
+
+/* Player Bar */
+.nav-justified {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    max-height: 52px;
+}
+
+.nav-justified li {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-bottom: 0;
+    font-weight: bold;
+    color: #777;
+    text-align: center;
+    background-color: #e5e5e5;
+}
+
+.nav-justified li.active {
+    background-color: #ddd;
+    -webkit-box-shadow: inset 0 3px 7px rgba(0,0,0,.15);
+    box-shadow: inset 0 3px 7px rgba(0,0,0,.15);
+    
+}
+
+.nav-justified li {
+    border-right: 1px solid #d5d5d5;
+    border-left: 1px solid #fff;
+}
+
+.nav-justified li:first-child {
+    border-left: 0;
+}
+
+.nav-justified li:last-child {
+    border-right: 0;
+}

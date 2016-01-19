@@ -1,0 +1,26 @@
+//Figure out someones elses cards
+		//makeGuess(new guess(0,4,4,4), 3, new card(0,4));
+		//makeGuess(new guess(0,4,4,4), 3, new card(1,4));
+		//makeGuess(new guess(0,4,4,4), 3, new card(2,4));
+
+		//Immediately Correct Guess
+		//makeGuess(new guess(0,1,2,1), undefined, undefined);
+
+		//Finish after other guesses
+		//makeGuess(new guess(0,0,2,1), undefined, undefined);
+		//trackGuess(new guess(1,1,3,5), 0);
+		//trackGuess(new guess(0,1,4,6), 3);
+
+		//Unknown Shows
+		//trackGuess(new guess(4,1,3,1), 5);
+		//makeGuess(new guess(0,0,3,1), 2, new card(2,1));
+
+		//Solve Puzzle from all other cards in category being known
+		// makeGuess(new guess(0,0,4,4), undefined, undefined);
+		// makeGuess(new guess(0,2,2,2), 1, new card(0,2));
+		// makeGuess(new guess(0,3,2,2), 1, new card(0,3));
+		// makeGuess(new guess(0,4,2,2), 2, new card(0,4));
+		// trackGuess(new guess(4,1,3,1), 5);
+		// makeGuess(new guess(0,0,3,1), 2, new card(2,1));
+
+		//Cascading Guess resolution solve
