@@ -2,7 +2,7 @@
         <ul class="nav nav-justified" ng-if="setupStep != 4">
             <li ng-class="{'active': setupStep == 1}">Welcome</li>
             <li ng-class="{'active': setupStep == 2}">Enter Players</li>
-            <li ng-class="{'active': setupStep == 3}">Enter Your Cards</li>
+            <li ng-class="{'active': setupStep == 3}">Enter Cards</li>
         </ul>
         <ul class="nav nav-justified" ng-if="setupStep == 4">
             <li ng-repeat="player in players" ng-class="{'active': activeTurn.player.index == player.index}">
@@ -13,30 +13,52 @@
 </nav>
 
 <div class="container" ng-if="setupStep != 4">
-    <div class="jumbotron">
-        <div ng-if="setupStep == 1">
-            <h2>Welcome to clue solver</h1>
-            <p class="lead">Put instructions here</p>
-            <p><button class="btn btn-lg btn-primary" ng-click="moveToNextStep()">Enter Players</button></p>
-        </div>
-        <div ng-if="setupStep == 2">
-            <h2>Enter the players playing</h1>
-            <form name="playersForm" class="form-inline">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Jane Doe" ng-model="playerInput.name" required />
-                    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com" ng-model="playerInput.icon" required />
-                    
-                    <button type="submit" class="btn btn-success" ng-disabled="playersForm.$invalid">Enter Player</button>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="jumbotron">
+                <div ng-if="setupStep == 1">
+                    <h2>Welcome to clue solver</h2>
+                    <p class="lead">Put instructions here</p>
+                    <p><button class="btn btn-lg btn-primary" ng-click="moveToNextStep()">Enter Players</button></p>
                 </div>
                 
-                <p><button class="btn btn-lg btn-primary" ng-click="moveToNextStep()" ng-if="players.length > 2">Enter Your Cards</button></p>
-            </form>
+                <div ng-if="setupStep == 2">
+                    <h2>Enter players in order</h2>
+
+                    <form class="form-inline">
+                        <div ui-sortable ng-model="playerInput" class="form-group">
+                            <div class="col-md-6 col-md-offset-3" ng-repeat="player in playerInput" style="padding: 3px;">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon">
+                                        <img ng-src="{{player.icon}}" width="18" />
+                                    </span>
+                                    <input type="text" class="form-control" placeholder="Name" ng-model="player.name" ng-disabled="!player.active" />
+                                    <span class="input-group-addon">
+                                        <input type="checkbox" ng-checked="player.active" ng-model="player.active" />
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-md-offset-3" style="padding: 3px;">
+                                <div class="input-group input-group-lg">
+                                    <input type="text" ng-model="startupForm.activePlayer" placeholder="Who are you playing as?" uib-typeahead="player as player.piece for player in playerInput | filter:{name:$viewValue}" typeahead-template-url="selectionTemplate.html" class="form-control" typeahead-min-length="0" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-md-offset-3" style="padding: 3px;">
+                                <div class="input-group input-group-lg">
+                                    <p><button class="btn btn-lg btn-primary" ng-click="setupPlayers()" ng-disabled="!validInputPlayers()">Enter Your Cards</button></p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div ng-if="setupStep == 3">
+                    <h2>Enter your cards</h1>
+                    <p><button class="btn btn-lg btn-primary" ng-click="moveToNextStep()">Start Game</button></p>
+                </div>
+            </div>
         </div>
-        <div ng-if="setupStep == 3">
-            <h2>Enter your cards</h1>
-            <p><button class="btn btn-lg btn-primary" ng-click="moveToNextStep()">Start Game</button></p>
-        </div>
-  </div>
+    </div>
 </div>
 
 <div class="container" ng-if="setupStep == 4">

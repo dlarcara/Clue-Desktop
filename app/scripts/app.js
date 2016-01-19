@@ -1,3 +1,3 @@
 'use strict';
 
-angular.module('clueApp', ['ui.bootstrap']);
+angular.module('clueApp', ['ui.bootstrap', 'ui.sortable']);

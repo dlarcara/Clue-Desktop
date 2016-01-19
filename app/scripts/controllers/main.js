@@ -7,24 +7,63 @@ angular.module('clueApp')
 		});
 
 		/*Start game work flow */
-		$scope.setupStep = 4;
+		$scope.setupStep = 2;
 
 		$scope.moveToNextStep = function() 
 		{
-			$scope.setupStep = $scope.setupStep + 1;			
+			$scope.setupStep = $scope.setupStep + 1;
+
+            if ($scope.setupStep == 4)
+            {
+                game.startGame($scope.activePlayerIndex, $scope.players, yourCards);
+                $scope.prepareNextTurn();
+            }
 		}
 
+        $scope.setupPlayers = function()
+        {
+            $scope.activePlayerIndex = 2;
+            $scope.players = $scope.playerInput
+                .filter(function(item) { return item.active; })
+                .map(function (item, index)
+                {
+                    return {index: index, name: item.name, icon: item.icon};
+                });
+
+            $scope.moveToNextStep();
+        };
+
+        $scope.startupForm = {};
+        $scope.validInputPlayers = function () 
+        {
+            if (!$scope.startupForm.activePlayer)
+                return false;
+
+            if ($scope.playerInput.filter(function (item) { return item.active && item.name; }).length < 3)
+                return false
+
+            return true;
+        }
+
+        $scope.playerInput = [
+            {name: undefined, icon: 'images/icons/suspects/plum.png', piece: 'Professor Plum', active: true},
+            {name: undefined, icon: 'images/icons/suspects/peacock.png', piece: 'Miss Peacock', active: true},
+            {name: undefined, icon: 'images/icons/suspects/mustard.png', piece: 'Colonel Mustard', active: true},
+            {name: undefined, icon: 'images/icons/suspects/scarlet.png', piece: 'Miss Scarlet' },
+            {name: undefined, icon: 'images/icons/suspects/green.png', piece: 'Mr. Green'},
+            {name: undefined, icon: 'images/icons/suspects/white.png', piece: 'Mrs. White'}
+        ];
+
 		/* Data to be entered on start of game */
-		$scope.activePlayerIndex = 0;
 		var yourCards = [game.createCard(0,1), game.createCard(1,3), game.createCard(2,5)];
-		$scope.players = [
-			{index: 0, name: 'David', icon: 'images/icons/suspects/plum.png'},
-			{index: 1, name: 'Mom', icon: 'images/icons/suspects/peacock.png'},
-			{index: 2, name: 'Dad', icon: 'images/icons/suspects/mustard.png'},
-			{index: 3, name: 'Jackie', icon: 'images/icons/suspects/scarlet.png'},
-			{index: 4, name: 'Steph', icon: 'images/icons/suspects/green.png'},
-			{index: 5, name: 'Mike', icon: 'images/icons/suspects/white.png'}
-		];
+		// $scope.players = [
+		// 	{index: 0, name: 'David', icon: 'images/icons/suspects/plum.png'},
+		// 	{index: 1, name: 'Mom', icon: 'images/icons/suspects/peacock.png'},
+		// 	{index: 2, name: 'Dad', icon: 'images/icons/suspects/mustard.png'},
+		// 	{index: 3, name: 'Jackie', icon: 'images/icons/suspects/scarlet.png'},
+		// 	{index: 4, name: 'Steph', icon: 'images/icons/suspects/green.png'},
+		// 	{index: 5, name: 'Mike', icon: 'images/icons/suspects/white.png'}
+		// ];
 
 		/* Static Data */
 		$scope.suspectCards = game.suspectCards;
@@ -198,10 +237,4 @@ angular.module('clueApp')
     		$scope.showncard.weaponShown = false;
     		$scope.showncard.roomShown = false;
     	}
-
-    	//Temp for testing
-		game.startGame($scope.activePlayerIndex, $scope.players, yourCards);
-		//game.makeGuess(game.createGuess(0,0,2,1), undefined, undefined);
-
-		$scope.prepareNextTurn();
   	});
