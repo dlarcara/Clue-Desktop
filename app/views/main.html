@@ -15,13 +15,13 @@
 <div class="container" ng-if="setupStep != 4">
     <div class="row">
         <div class="col-md-12">
-            <div class="jumbotron">
-                <div ng-if="setupStep == 1">
+            <div class="setup-wizard" style="text-align: center;">
+                <div ng-if="setupStep == 1" style="text-align: center">
                     <h2>Welcome to clue solver</h2>
                     <p class="lead">Put instructions here</p>
                     <p><button class="btn btn-lg btn-primary" ng-click="moveToNextStep()">Enter Players</button></p>
                 </div>
-                
+
                 <div ng-if="setupStep == 2">
                     <h2>Enter players in order</h2>
 
@@ -53,8 +53,22 @@
                 </div>
 
                 <div ng-if="setupStep == 3">
-                    <h2>Enter your cards</h1>
-                    <p><button class="btn btn-lg btn-primary" ng-click="moveToNextStep()">Start Game</button></p>
+                    <h2>Enter your cards</h2>
+
+                    <div class="form-group" ng-if="players.length == 4 || players.length == 5">
+                        <p>Who has an extra card</p>
+                        <span ng-repeat="player in players" style="padding: 0px 15px;">
+                            {{player.name}}&nbsp;<input type="checkbox" ng-model="player.extraCard" />
+                        </span>
+                    </div>
+
+                    <div class="form-group">
+                        <p>Your Cards Here</p>
+                        
+                        <div isteven-multi-select orientation="horizontal" input-model="cards.availableCards" output-model="cards.yourCards" output-properties="category index" button-label="icon name" item-label="icon name" helper-elements="" tick-property="ticked" ></div>
+                    </div>
+
+                    <p><button class="btn btn-lg btn-primary" ng-click="moveToNextStep()" ng-disabled="!cardsValid()">Start Game</button></p>
                 </div>
             </div>
         </div>

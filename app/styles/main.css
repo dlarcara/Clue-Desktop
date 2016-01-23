@@ -7,8 +7,22 @@ body
 .jumbotron
 {
     color: black;
-    text-align: center;
     height: 550px;
+}
+
+.setup-wizard
+{
+    padding: 48px 60px;
+    border-radius: 6px;
+    background-color: #eeeeee;
+    color: black;
+}
+
+.setup-wizard .multiSelect .show
+{
+    text-align: left;
+    margin: 0 28%;
+    width: 600px;
 }
 
 /* Clue Sheet */

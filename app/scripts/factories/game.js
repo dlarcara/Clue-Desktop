@@ -121,7 +121,7 @@ angular.module('clueApp')
 
 		function markPlayerAsNotHavingOtherCardsIfAllTheirCardsAreKnown(player)
 		{
-			var totalPlayerCards = ((suspectCards.length + weaponCards.length + roomCards.length) / players.length).floor();
+			var totalPlayerCards = getPlayerNumberOfCards(player, players);
 			var knownCards = getCardsPlayerHas(player);
 			
 			if (totalPlayerCards == knownCards.length)
@@ -130,6 +130,16 @@ angular.module('clueApp')
 				fillOutCategoryForPlayerWithDontHaves(player, weaponIndex);
 				fillOutCategoryForPlayerWithDontHaves(player, roomIndex);
 			}
+		}
+
+		function getPlayerNumberOfCards(player, players)
+		{
+			var numberOfCards = (((suspectCards.length + weaponCards.length + roomCards.length) - 3) / players.length).floor();
+
+			if (players[player].extraCard)
+				return numberOfCards + 1;
+
+			return numberOfCards;
 		}
 
 		function fillOutCategoryForPlayerWithDontHaves(player, categoryIndex)
@@ -425,6 +435,7 @@ angular.module('clueApp')
 			createShow: function (player, suspect, weapon, room) { return new show(player, suspect, weapon, room); },
 			
 			getCardStatusForPlayer: getCardStatusForPlayer,
+			getPlayerNumberOfCards: getPlayerNumberOfCards,
 			getVerdict: function () { return verdict; }
 		};
 	});

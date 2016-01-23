@@ -1,13 +1,9 @@
 'use strict';
 
 angular.module('clueApp')
-	.controller('MainCtrl', function ($scope, game, $q) {
-		$(document).ready(function(){
-			setTimeout(function () { $(".sheet img").tooltip({ placement : 'top' }); }, 1000);
-		});
-
+	.controller('MainCtrl', function ($scope, game) {
 		/*Start game work flow */
-		$scope.setupStep = 2;
+		$scope.setupStep = 1;
 
 		$scope.moveToNextStep = function() 
 		{
@@ -15,20 +11,23 @@ angular.module('clueApp')
 
             if ($scope.setupStep == 4)
             {
+                var yourCards = $scope.cards.yourCards.map(function (card) { return game.createCard(card.category, card.index)});
+
                 game.startGame($scope.activePlayerIndex, $scope.players, yourCards);
+                
                 $scope.prepareNextTurn();
             }
 		}
 
         $scope.setupPlayers = function()
         {
-            $scope.activePlayerIndex = 2;
             $scope.players = $scope.playerInput
                 .filter(function(item) { return item.active; })
                 .map(function (item, index)
                 {
-                    return {index: index, name: item.name, icon: item.icon};
+                    return {index: index, name: item.name, icon: item.icon, extraCard: false};
                 });
+            $scope.activePlayerIndex = $scope.players.filter(function(player) { return player.icon == $scope.startupForm.activePlayer.icon; })[0].index;
 
             $scope.moveToNextStep();
         };
@@ -46,24 +45,27 @@ angular.module('clueApp')
         }
 
         $scope.playerInput = [
-            {name: undefined, icon: 'images/icons/suspects/plum.png', piece: 'Professor Plum', active: true},
-            {name: undefined, icon: 'images/icons/suspects/peacock.png', piece: 'Miss Peacock', active: true},
-            {name: undefined, icon: 'images/icons/suspects/mustard.png', piece: 'Colonel Mustard', active: true},
+            {name: undefined, icon: 'images/icons/suspects/plum.png', piece: 'Professor Plum', active: true },
+            {name: undefined, icon: 'images/icons/suspects/peacock.png', piece: 'Miss Peacock', active: true },
+            {name: undefined, icon: 'images/icons/suspects/mustard.png', piece: 'Colonel Mustard', active: true },
             {name: undefined, icon: 'images/icons/suspects/scarlet.png', piece: 'Miss Scarlet' },
-            {name: undefined, icon: 'images/icons/suspects/green.png', piece: 'Mr. Green'},
-            {name: undefined, icon: 'images/icons/suspects/white.png', piece: 'Mrs. White'}
+            {name: undefined, icon: 'images/icons/suspects/green.png', piece: 'Mr. Green' },
+            {name: undefined, icon: 'images/icons/suspects/white.png', piece: 'Mrs. White' }
         ];
 
-		/* Data to be entered on start of game */
-		var yourCards = [game.createCard(0,1), game.createCard(1,3), game.createCard(2,5)];
-		// $scope.players = [
-		// 	{index: 0, name: 'David', icon: 'images/icons/suspects/plum.png'},
-		// 	{index: 1, name: 'Mom', icon: 'images/icons/suspects/peacock.png'},
-		// 	{index: 2, name: 'Dad', icon: 'images/icons/suspects/mustard.png'},
-		// 	{index: 3, name: 'Jackie', icon: 'images/icons/suspects/scarlet.png'},
-		// 	{index: 4, name: 'Steph', icon: 'images/icons/suspects/green.png'},
-		// 	{index: 5, name: 'Mike', icon: 'images/icons/suspects/white.png'}
-		// ];
+        $scope.cardsValid = function () 
+        {
+            if ($scope.players.length == 4 && $scope.players.count(function (player) { return player.extraCard; }) != 2)
+                return false;
+
+            if ($scope.players.length == 5 && $scope.players.count(function (player) { return player.extraCard; }) != 3)
+                return false;
+                
+            if (game.getPlayerNumberOfCards($scope.activePlayerIndex, $scope.players) != $scope.cards.yourCards.length)
+                return false;
+
+            return true;
+        }
 
 		/* Static Data */
 		$scope.suspectCards = game.suspectCards;
@@ -74,15 +76,31 @@ angular.module('clueApp')
 		$scope.weaponIndex = game.weaponIndex;
 		$scope.roomIndex = game.roomIndex;
 
+        $scope.cards =
+        {
+            availableCards: getCardGroupForSelection(0, $scope.suspectCards).concat(getCardGroupForSelection(1, $scope.weaponCards)).concat(getCardGroupForSelection(2, $scope.roomCards)),
+            yourCards: []
+        }
+
+        function getCardGroupForSelection(category, suspects)
+        {
+            var categories = ['Susepcts', 'Weapons', 'Rooms'];
+            
+            var groupStart = [{ name: "<strong>" + categories[category] + "</strong>", msGroup: true }];
+            var groupEnd = [{ msGroup: false }];
+
+            return groupStart.concat(suspects.map(function (card) { return formatCardForSelection(category, card); })).concat(groupEnd);
+        }
+
+        function formatCardForSelection(category, card)
+        {
+            return {icon: "<img  src=" + card.icon + " />", name: card.name, category: category, index: card.index };
+        }
+
 		/* Game Data */
 		$scope.turns = [];
 
 		/* UI Methods */
-		$scope.gameStarted = true;
-    	$scope.startGame = function () {
-    		game. startGame($scope.activePlayerIndex, $scope.players, yourCards);
-    	};
-
 		$scope.getPlayerName = function (playerIndex)
 		{
 			 return player.index == activePlayerIndex ? 'You' : players[playerIndex].name;
